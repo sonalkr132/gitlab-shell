@@ -18,26 +18,3 @@ begin
 rescue GitlabNet::ApiUnreachableError
   abort "FAILED: Failed to connect to internal API"
 end
-
-
-puts "\nCheck directories and files: "
-
-config = GitlabConfig.new
-dirs = [config.repos_path, config.auth_file]
-
-dirs.each do |dir|
-  abort("ERROR: missing option in config.yml") unless dir
-  print "\t#{dir}: "
-  if File.exists?(dir)
-    print 'OK'
-  else
-    abort "FAILED"
-  end
-  puts "\n"
-end
-
-print "Test redis-cli executable: "
-abort('FAILED') unless system(*config.redis_command, '--version')
-
-print "Send ping to redis server: "
-abort unless system(*config.redis_command, 'ping')

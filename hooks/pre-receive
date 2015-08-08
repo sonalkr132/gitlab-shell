@@ -10,8 +10,8 @@ repo_path = Dir.pwd
 require_relative '../lib/gitlab_custom_hook'
 require_relative '../lib/gitlab_access'
 
-if GitlabAccess.new(repo_path, key_id, refs).exec &&
-    GitlabCustomHook.new.pre_receive(refs, repo_path)
+
+if GitlabAccess.new(repo_path, key_id, refs).exec
   exit 0
 else
   # reset GL_ID env since we stop git push here

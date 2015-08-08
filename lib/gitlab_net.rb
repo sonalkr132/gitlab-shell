@@ -52,6 +52,21 @@ class GitlabNet
     get("#{host}/check")
   end
 
+  def sync_changes(repo, changes)
+    project_name = repo.gsub("'", "")
+    project_name = project_name.gsub(/\.git\Z/, "")
+    project_name = project_name.gsub(/\A\//, "")
+    changes = changes.join("\n") unless changes.kind_of?(String)
+
+    params = {
+      changes: changes,
+      project: project_name,
+    }
+
+    url = "#{host}/sync"
+    resp = post(url, params)
+  end
+
   protected
 
   def config
@@ -59,7 +74,7 @@ class GitlabNet
   end
 
   def host
-    "#{config.gitlab_url}/api/v3/internal"
+    "#{config.gitlab_url}/api/v1/internal"
   end
 
   def http_client_for(uri)
@@ -94,7 +109,6 @@ class GitlabNet
 
     http = http_client_for(uri)
     request = http_request_for(method, uri, params)
-
     begin
       response = http.start { http.request(request) }
     rescue => e
